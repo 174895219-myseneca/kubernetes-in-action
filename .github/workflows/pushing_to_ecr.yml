@@ -2,34 +2,29 @@ name: Deploy to ECR
 
 on: 
   push:
-    branches: [ master ]
+    branches: [ master ] # Ensure this is your default branch, otherwise change 'master' to your default branch name.
 
 jobs:
-  
   build:
-    
     name: Build Image
     runs-on: ubuntu-latest
 
-   
     steps:
-
     - name: Check out code
       uses: actions/checkout@v2
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-        AWS_REGION: us-east-1
+      with: # 'with' key is used for passing inputs to a GitHub Action
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
     - name: Build, test, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: clo835-week4
+        ECR_REPOSITORY: clo835-week3
         IMAGE_TAG: v0.1
       run: |
         cd Chapter02/kubia/
